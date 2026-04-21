@@ -9,5 +9,4 @@ public class HireFlowApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HireFlowApplication.class, args);
 	}
-
 }
