@@ -32,32 +32,28 @@ public class AuthService {
 	@Autowired
 	private UserRepo userRepo;
 
+	@Autowired
+	private RoleRepo roleRepo;
 
-@Autowired
-private RoleRepo roleRepo;
+	public String register(RegisterRequest request) {
+		User user = new User();
+		user.setName(request.getName());
+		user.setEmail(request.getEmail());
+		// Password encode karke save karo
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-public String register(RegisterRequest request) {
-    User user = new User();
-    user.setName(request.getName());
-    user.setEmail(request.getEmail());
-    // Password encode karke save karo
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
+		// Role assign karo
+		Role role = roleRepo.findByName(RoleName.ROLE_SEEKER).orElseThrow(() -> new RuntimeException("Role not found"));
 
-    // Role assign karo
-    Role role = roleRepo.findByName(RoleName.ROLE_SEEKER)
-        .orElseThrow(() -> new RuntimeException("Role not found"));
-    
-    user.setRoles(Set.of(role));
-    userRepo.save(user);
-    
-    return "User registered successfully";
-}
+		user.setRoles(Set.of(role));
+		userRepo.save(user);
 
+		return "User registered successfully";
+	}
 
 	public AuthResponse login(LoginRequest loginRequest) {
 		Authentication auth = authManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword())
-		);
+				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		User user = (User) auth.getPrincipal();
 		String token = jwtUtils.generateToken(loginRequest.getEmail());
 		return new AuthResponse(token);
