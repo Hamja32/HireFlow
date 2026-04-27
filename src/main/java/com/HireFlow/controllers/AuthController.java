@@ -28,4 +28,6 @@ public class AuthController {
 	public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
 	    return ResponseEntity.ok(authService.register(request));
 	}
+
+	
 }
