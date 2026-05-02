@@ -9,7 +9,7 @@ public class RegisterRequest {
 	private String name;
 	private String email;
 	private String password;
-	private Role roles;
+	private String roles;
 	public String getName() {
 		return name;
 	}
@@ -28,10 +28,10 @@ public class RegisterRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Role getRoles() {
+	public String getRoles() {
 		return roles;
 	}
-	public void setRoles(Role roles) {
+	public void setRoles(String roles) {
 		this.roles = roles;
 	}
 	

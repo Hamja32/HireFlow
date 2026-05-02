@@ -40,12 +40,13 @@ public class User implements UserDetails{
     )
     private Set<Role> roles = new HashSet<>();
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		 return roles.stream()
-		            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-		            .collect(Collectors.toList());
-	}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .collect(Collectors.toList());
+    }
+	
 
 	@Override
 	public @Nullable String getPassword() {
@@ -53,7 +54,7 @@ public class User implements UserDetails{
 	}
 	@Override
 	public String getUsername() {
-		return name;
+		return email;
 	}
 	public Long getId() {
 		return id;

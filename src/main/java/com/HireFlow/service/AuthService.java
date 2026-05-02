@@ -42,9 +42,10 @@ public class AuthService {
 		// Password encode karke save karo
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-		// Role assign karo
-		Role role = roleRepo.findByName(RoleName.ROLE_SEEKER).orElseThrow(() -> new RuntimeException("Role not found"));
-
+		RoleName roleName = RoleName.valueOf(request.getRoles());
+		Role role = roleRepo.findByName(roleName)
+		    .orElseThrow(() -> new RuntimeException("Role not found"));
+		
 		user.setRoles(Set.of(role));
 		userRepo.save(user);
 

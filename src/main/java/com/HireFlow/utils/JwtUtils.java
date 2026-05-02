@@ -39,8 +39,10 @@ public class JwtUtils {
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
                 .build()
                 .parseClaimsJws(token);
+            System.out.println("Token valid!"); // debug
             return true;
         } catch (Exception e) {
+        	  System.out.println("Token invalid: " + e.getMessage()); // debug
             return false;
         }
     }

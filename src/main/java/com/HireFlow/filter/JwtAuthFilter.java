@@ -7,9 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,7 +21,6 @@ import com.HireFlow.service.CustomUserDetailsService;
 import com.HireFlow.utils.JwtUtils;
 
 import java.io.IOException;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -27,27 +30,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+   
+    private SecurityContextRepository securityContextRepository = 
+        new RequestAttributeSecurityContextRepository();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. Header se token nikalo
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String email = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7); // "Bearer " hata do
+            token = authHeader.substring(7);
             email = jwtUtils.getEmailFromToken(token);
         }
 
-        // 2. Token valid hai aur user abhi authenticated nahi
-        if (email != null && 
+        if (email != null &&
             SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = 
+            UserDetails userDetails =
                 userDetailsService.loadUserByUsername(email);
 
             if (jwtUtils.validateToken(token)) {
@@ -61,9 +66,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     new WebAuthenticationDetailsSource()
                         .buildDetails(request)
                 );
-                // 3. User ko authenticated mark karo
-                SecurityContextHolder.getContext()
-                    .setAuthentication(authToken);
+
+                // New — SecurityContext explicitly save karo
+                SecurityContext context = 
+                    SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authToken);
+                SecurityContextHolder.setContext(context);
+                
+                securityContextRepository.saveContext(
+                    context, request, response);
             }
         }
         filterChain.doFilter(request, response);
