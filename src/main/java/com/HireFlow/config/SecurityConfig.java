@@ -36,11 +36,10 @@ public class SecurityConfig {
         	    )
           
           .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/api/auth/**").permitAll()
+              .requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated()
 //              .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 //              .requestMatchers("/api/company/**").hasAuthority("ROLE_COMPANY")
 //              .requestMatchers("/api/seeker/**").hasAuthority("ROLE_SEEKER")
-              .anyRequest().authenticated()
           ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
