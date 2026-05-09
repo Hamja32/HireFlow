@@ -29,6 +29,20 @@ public class UserService {
 	        return ResponseEntity.ok(profile);
 	}
 
+
+
+	public ResponseEntity<?> getCompProfile(Authentication auth) {
+		  User user = userRepo.findByEmail(auth.getName())
+		            .orElseThrow(() -> new RuntimeException("Company not found"));
+
+		        Map<String, Object> profile = new HashMap<>();
+		        profile.put("name", user.getName());
+		        profile.put("email", user.getEmail());
+		        System.out.println(profile);
+		        return ResponseEntity.ok(profile);
+		       
+	}
+
 	
 	
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,11 +31,17 @@ public class ApplicationController {
     @PreAuthorize("hasAuthority('ROLE_SEEKER')")
     @PostMapping("/seeker/jobs/{jobId}/apply")
     public ResponseEntity<String> applyForJob(@PathVariable Long jobId) {
-        Authentication auth = SecurityContextHolder
-            .getContext().getAuthentication();
-        String email = auth.getName();
-        return ResponseEntity.ok(
-            applicationService.applyForJob(jobId, email));
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            
+            String response = applicationService.applyForJob(jobId, email);
+            return ResponseEntity.ok(response);
+            
+        } catch (RuntimeException e) {
+            // Agar "Already applied" wali error aati hai to yahan handle hogi
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // Seeker apni applications dekhe
@@ -65,5 +72,14 @@ public class ApplicationController {
             @RequestParam String status) {
         return ResponseEntity.ok(
             applicationService.updateStatus(appId, status));
+    }
+    
+    @PreAuthorize("hasAuthority('ROLE_SEEKER')")
+    @DeleteMapping("/seeker/applications/{appId}/withdraw")
+    public ResponseEntity<String> withdrawApplication(
+            @PathVariable Long appId,
+            Authentication auth) {
+        return ResponseEntity.ok(
+            applicationService.withdrawApplication(appId, auth.getName()));
     }
 }

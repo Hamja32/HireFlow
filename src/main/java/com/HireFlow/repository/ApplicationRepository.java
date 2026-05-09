@@ -12,8 +12,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long>{
 
 	public List<Application>findByApplicantEmail(String email);
 	public List<Application>findByJobId(Long jobid);
-	
-	
+	public boolean existsByJobIdAndApplicantEmail(Long jobId, String email);
+	public void deleteByIdAndApplicantEmail(Long id, String email);
 //	1. findByApplicantEmail(String email) 
 //	   → seeker ki sari applications
 //

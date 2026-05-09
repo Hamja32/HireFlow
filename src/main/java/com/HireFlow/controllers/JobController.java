@@ -7,11 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HireFlow.dto.JobRequest;
@@ -41,7 +44,7 @@ public class JobController {
 		return ResponseEntity.ok(jobService.postJob(req, email));
 	}
 	
-	@PreAuthorize("hasAuthority('ROLE_SEEKER')")
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/seeker/jobs")
 	public ResponseEntity<List<JobResponse>> getAllJobs() {
 	    return ResponseEntity.ok(jobService.getAllJobs());
@@ -51,6 +54,38 @@ public class JobController {
 	@GetMapping("/seeker/jobs/{id}")
 	public ResponseEntity<JobResponse> getJobById(@PathVariable Long id) {
 	    return ResponseEntity.ok(jobService.getJobById(id));
+	}
+	
+	@PreAuthorize("hasAuthority('ROLE_COMPANY')")
+	@GetMapping("/company/my-jobs")
+	public ResponseEntity<List<JobResponse>> getMyJobs(Authentication auth) {
+	    return ResponseEntity.ok(jobService.getMyPostedJobs(auth.getName()));
+	}
+	
+	@PreAuthorize("hasAuthority('ROLE_COMPANY')")
+	@DeleteMapping("/company/jobs/{jobId}")
+	public ResponseEntity<String> deleteJob(
+	        @PathVariable Long jobId,
+	        Authentication auth) {
+	    return ResponseEntity.ok(
+	        jobService.deleteJob(jobId, auth.getName()));
+	}
+	
+	@PreAuthorize("hasAuthority('ROLE_COMPANY')")
+	@PutMapping("/company/jobs/{jobId}")
+	public ResponseEntity<String> updateJob(
+	        @PathVariable Long jobId,
+	        @RequestBody JobRequest request,
+	        Authentication auth) {
+	    return ResponseEntity.ok(
+	        jobService.updateJob(jobId, request, auth.getName()));
+	}
+	
+	@GetMapping("/seeker/jobs/search")
+	public ResponseEntity<List<JobResponse>> searchJobs(
+	        @RequestParam(required = false) String location,
+	        @RequestParam(required = false) String skills) {
+	    return ResponseEntity.ok(jobService.searchJobs(location, skills));
 	}
 }
 

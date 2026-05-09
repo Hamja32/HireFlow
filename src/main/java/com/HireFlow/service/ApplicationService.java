@@ -26,15 +26,25 @@ public class ApplicationService {
 	private ApplicationRepository appRepo;
 	
 	public String applyForJob(Long jobId, String email) {
-		Job job = jobRepo.findById(jobId).orElseThrow(() -> new RuntimeException("Job Not found"));
-		User applicant = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("Job Not found"));
-		
-		Application application = new Application();
-		application.setApplicant(applicant);
-		application.setJob(job);
-		application.setStatus(ApplicationStatus.APPLIED);
-		appRepo.save(application);
-		return "Applied Successfully";
+	    // Check if user already applied for this job
+	    boolean alreadyApplied = appRepo.existsByJobIdAndApplicantEmail(jobId, email);
+	   
+	    if (alreadyApplied) {
+	        throw new RuntimeException("You have already applied for this job.");
+	    }
+
+	    Job job = jobRepo.findById(jobId)
+	        .orElseThrow(() -> new RuntimeException("Job not found"));
+	    User applicant = userRepo.findByEmail(email)
+	        .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    Application application = new Application();
+	    application.setApplicant(applicant);
+	    application.setJob(job);
+	    application.setStatus(ApplicationStatus.APPLIED);
+	    appRepo.save(application);
+	    
+	    return "Applied Successfully";
 	}
 	
 	
@@ -79,7 +89,18 @@ public class ApplicationService {
 	}
 
 	
-	
+	public String withdrawApplication(Long appId, String email) {
+	    Application app = appRepo.findById(appId)
+	        .orElseThrow(() -> new RuntimeException("Application not found"));
+	    
+	    // Check — sirf apni application withdraw kar sake
+	    if (!app.getApplicant().getEmail().equals(email)) {
+	        throw new RuntimeException("Unauthorized");
+	    }
+	    
+	    appRepo.delete(app);
+	    return "Application withdrawn successfully";
+	}
 	
 	
 //	1. applyForJob(Long jobId, String email)

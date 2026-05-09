@@ -12,7 +12,7 @@ public class ApplicationResponse {
 	private String location;
 	private ApplicationStatus status;
 	private LocalDateTime appliedAt;
-	
+
 	public Long getId() {
 		return id;
 	}
