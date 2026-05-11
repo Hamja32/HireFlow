@@ -25,6 +25,11 @@ public class ApplicationService {
 	@Autowired
 	private ApplicationRepository appRepo;
 	
+	@Autowired
+	private NotificationService notifService;
+
+
+	
 	public String applyForJob(Long jobId, String email) {
 	    // Check if user already applied for this job
 	    boolean alreadyApplied = appRepo.existsByJobIdAndApplicantEmail(jobId, email);
@@ -79,12 +84,21 @@ public class ApplicationService {
 	        })
 	        .collect(Collectors.toList());
 	}
-
+	
 	public String updateStatus(Long appId, String status) {
 	    Application app = appRepo.findById(appId)
 	        .orElseThrow(() -> new RuntimeException("Application not found"));
+
 	    app.setStatus(ApplicationStatus.valueOf(status));
 	    appRepo.save(app);
+
+	    // Notification bhejo seeker ko
+	    String seekerEmail = app.getApplicant().getEmail();
+	    String jobTitle = app.getJob().getTitle();
+	    String message = "Your application for \"" + jobTitle + 
+	        "\" has been updated to: " + status;
+	    notifService.createNotification(seekerEmail, message);
+
 	    return "Status updated to: " + status;
 	}
 
