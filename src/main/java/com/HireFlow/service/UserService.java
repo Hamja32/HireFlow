@@ -26,6 +26,7 @@ public class UserService {
 	        profile.put("name", user.getName());
 	        profile.put("email", user.getEmail());
 	        profile.put("role", user.getRoles());        
+	        profile.put("hasResume", user.getResumeFileName() != null); // ← ye add karo
 	        return ResponseEntity.ok(profile);
 	}
 

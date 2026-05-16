@@ -15,6 +15,12 @@ public class CompanyApplicationResponse {
 		public String getApplicantName() {
 			return applicantName;
 		}
+		private boolean hasResume;
+
+		public boolean isHasResume() { return hasResume; }
+		public void setHasResume(boolean hasResume) { 
+		    this.hasResume = hasResume; 
+		}
 		public void setApplicantName(String applicantName) {
 			this.applicantName = applicantName;
 		}

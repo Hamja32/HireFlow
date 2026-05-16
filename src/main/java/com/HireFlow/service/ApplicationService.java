@@ -62,6 +62,7 @@ public class ApplicationService {
 	            res.setCompanyName(app.getJob().getPostedBy().getName());
 	            res.setLocation(app.getJob().getLocation());
 	            res.setStatus(app.getStatus());
+	            res.setHasResume(app.getApplicant().getResumeFileName() != null);
 	            res.setAppliedAt(app.getAppliedAt());
 	            return res;
 	        })
@@ -79,6 +80,7 @@ public class ApplicationService {
 	            res.setApplicantName(app.getApplicant().getName());
 	            res.setApplicantEmail(app.getApplicant().getEmail());
 	            res.setStatus(app.getStatus());
+	            res.setHasResume(app.getApplicant().getResumeFileName() != null); // ← ye missing tha
 	            res.setAppliedAt(app.getAppliedAt());
 	            return res;
 	        })

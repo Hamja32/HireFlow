@@ -13,6 +13,13 @@ public class ApplicationResponse {
 	private ApplicationStatus status;
 	private LocalDateTime appliedAt;
 
+	private boolean hasResume;
+
+	public boolean isHasResume() { return hasResume; }
+	public void setHasResume(boolean hasResume) { 
+	    this.hasResume = hasResume; 
+	}
+	
 	public Long getId() {
 		return id;
 	}
