@@ -96,7 +96,10 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 780e4bb68f0778ac33f9fcbb78c402890828d2b6
 	</dependencies>
 
 	<build>
