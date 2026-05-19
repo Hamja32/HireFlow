@@ -19,6 +19,12 @@ public class AuthController {
 	@Autowired
 	public AuthService authService;
 	
+	@PostMapping("/hello")
+	public String hello() {
+		return "hello";
+	}
+	
+	
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginReq){
 		return ResponseEntity.ok(authService.login(loginReq));
